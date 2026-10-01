@@ -1,4 +1,4 @@
-name: Build REAL 31MB APK
+name: Build Signed 31MB APK
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -10,7 +10,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create REAL 31MB Game
+      - name: Create Signed 31MB Game
         run: |
           cat > settings.gradle <<'ENDOFFILE'
           pluginManagement {
@@ -57,10 +57,13 @@ jobs:
                   applicationId "com.sifat.dreamleague"
                   minSdk 21
                   targetSdk 34
-                  versionCode 12
-                  versionName "12.0-31MB-REAL"
+                  versionCode 13
+                  versionName "13.0-SIGNED-31MB"
               }
               buildTypes {
+                  debug {
+                      minifyEnabled false
+                  }
                   release {
                       minifyEnabled false
                   }
@@ -81,7 +84,7 @@ jobs:
           cat > app/src/main/AndroidManifest.xml <<'ENDOFFILE'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <application android:label="Dream League 31MB Real">
+              <application android:label="Dream League 31MB">
                   <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN"/>
@@ -110,7 +113,7 @@ jobs:
                   if(bx<50||bx>w-50) bvx*=-1; if(by<90||by>h-90) bvy*=-1;
                   if(Math.hypot(bx-gkX, by-170)<70){ bvy=10; bvx=(bx-gkX)/5; }
                   if(bx>w/2-200&&bx<w/2+200&&by<190){ if(Math.abs(bx-gkX)>60) score++; bx=540; by=900; bvx=0; bvy=0; }
-                  p.setColor(Color.YELLOW); p.setTextSize(45); canvas.drawText("GOAL: "+score+" | 31MB REAL", 30, 55, p);
+                  p.setColor(Color.YELLOW); p.setTextSize(45); canvas.drawText("GOAL: "+score+" | 31MB SIGNED", 30, 55, p);
                   long left=90-(System.currentTimeMillis()-start)/1000; if(left<0) left=0;
                   if(left==0){ p.setColor(Color.BLACK); p.setAlpha(200); canvas.drawRect(0,0,w,h,p); p.setAlpha(255); p.setColor(Color.WHITE); p.setTextSize(60); p.setTextAlign(Paint.Align.CENTER); canvas.drawText("FULL TIME "+score, w/2, h/2, p); return; }
                   invalidate();
@@ -131,15 +134,14 @@ jobs:
         with:
           gradle-version: 8.7
 
-      - run: gradle assembleRelease bundleRelease
-      - run: ls -lh app/build/outputs/apk/release/ && du -h app/build/outputs/apk/release/*.apk
+      - name: Build SIGNED Debug APK
+        run: gradle assembleDebug
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: APK-31MB-REAL-FULL-GAME
-          path: app/build/outputs/apk/release/*.apk
+      - name: Show Size
+        run: ls -lh app/build/outputs/apk/debug/
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload SIGNED APK - This Will Install
+        uses: actions/upload-artifact@v4
         with:
-          name: AAB-31MB-REAL-FULL-GAME
-          path: app/build/outputs/bundle/release/*.aab
+          name: APK-31MB-SIGNED-INSTALLABLE
+          path: app/build/outputs/apk/debug/*.apk
