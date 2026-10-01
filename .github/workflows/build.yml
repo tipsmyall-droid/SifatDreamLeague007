@@ -1,4 +1,4 @@
-name: NO UPDATE FINAL
+name: FIXED NO UPDATE BUILD
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -9,53 +9,100 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build No Update Game
+
+      - name: Create Fixed Game
         run: |
-          mkdir -p app/src/main/java/com/sifat/myfootball2026
-          echo "include ':app'" > settings.gradle
-          echo "plugins { id 'com.android.application' version '8.2.0' apply false }" > build.gradle
-          echo "android.useAndroidX=true" > gradle.properties
-          cat > app/build.gradle <<'EOF'
-          plugins { id 'com.android.application' }
-          android {
-            namespace 'com.sifat.myfootball2026'
-            compileSdk 33
-            defaultConfig { 
-              applicationId "com.sifat.myfootball2026"
-              minSdk 21
-              targetSdk 33
-              versionCode 1
-              versionName "1.0"
-            }
-            buildTypes { debug { minifyEnabled false } }
+          cat > settings.gradle <<'ENDOFFILE'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
           }
-          dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' }
-          EOF
-          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          include ':app'
+          ENDOFFILE
+
+          cat > build.gradle <<'ENDOFFILE'
+          plugins {
+              id 'com.android.application' version '8.2.0' apply false
+              id 'com.android.library' version '8.2.0' apply false
+          }
+          ENDOFFILE
+
+          cat > gradle.properties <<'ENDOFFILE'
+          android.useAndroidX=true
+          ENDOFFILE
+
+          mkdir -p app/src/main/java/com/sifat/myfootball2026
+
+          cat > app/build.gradle <<'ENDOFFILE'
+          plugins {
+              id 'com.android.application'
+          }
+          android {
+              namespace 'com.sifat.myfootball2026'
+              compileSdk 33
+              defaultConfig {
+                  applicationId "com.sifat.myfootball2026"
+                  minSdk 21
+                  targetSdk 33
+                  versionCode 1
+                  versionName "1.0"
+              }
+              buildTypes {
+                  debug { minifyEnabled false }
+              }
+          }
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+          }
+          ENDOFFILE
+
+          cat > app/src/main/AndroidManifest.xml <<'ENDOFFILE'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-          <application android:label="My Football 2026">
-          <activity android:name=".MainActivity" android:exported="true">
-          <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-          </activity></application></manifest>
-          EOF
-          cat > app/src/main/java/com/sifat/myfootball2026/MainActivity.java <<'EOF'
+              <application android:label="My Football 2026 NO UPDATE">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          ENDOFFILE
+
+          cat > app/src/main/java/com/sifat/myfootball2026/MainActivity.java <<'ENDOFFILE'
           package com.sifat.myfootball2026;
           import android.app.Activity; import android.graphics.Color; import android.os.Bundle; import android.widget.TextView;
           public class MainActivity extends Activity {
-            protected void onCreate(Bundle b){
-              super.onCreate(b);
-              TextView tv=new TextView(this);
-              tv.setText("\n\n MY FOOTBALL 2026\n\n NO UPDATE!\n\n Install Success!");
-              tv.setTextSize(30); tv.setTextColor(Color.WHITE); tv.setBackgroundColor(Color.parseColor("#1B5E20"));
-              tv.setGravity(17); setContentView(tv);
-            }
+              protected void onCreate(Bundle b){
+                  super.onCreate(b);
+                  TextView tv=new TextView(this);
+                  tv.setText("\n\n MY FOOTBALL 2026\n\n NO UPDATE! FIXED!\n\n Install Success!");
+                  tv.setTextSize(28); tv.setTextColor(Color.WHITE); tv.setBackgroundColor(Color.parseColor("#1B5E20"));
+                  tv.setGravity(17); setContentView(tv);
+              }
           }
-          EOF
+          ENDOFFILE
+
       - uses: gradle/actions/setup-gradle@v3
-        with: { gradle-version: 8.7 }
-      - run: gradle assembleDebug
-      - uses: actions/upload-artifact@v4
         with:
-          name: APK-NO-UPDATE-MY-FOOTBALL
+          gradle-version: 8.7
+
+      - name: Build APK
+        run: gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: APK-FIXED-NO-UPDATE
           path: app/build/outputs/apk/debug/*.apk
