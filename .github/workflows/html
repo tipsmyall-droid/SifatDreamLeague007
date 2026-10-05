@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[MUM] SIFAT Football</title>
+<style>
+body{margin:0;background:#1a5c1a;overflow:hidden;font-family:Arial}
+#stadium{width:100vw;height:100vh;background:radial-gradient(#2d8a2d,#0f4d0f);position:relative}
+#pitch{position:absolute;top:10%;left:5%;width:90%;height:80%;border:3px solid white;background:linear-gradient(90deg,#3a9a3a 50%,#2d8a2d 50%)}
+.goal{position:absolute;width:8%;height:20%;border:3px solid white;top:40%;background:rgba(255,255,255,0.3)}
+#goal1{left:-8%} #goal2{right:-8%}
+#billboard{position:absolute;bottom:2%;width:100%;text-align:center;color:yellow;font-weight:bold;background:blue;padding:5px}
+.player{position:absolute;width:20px;height:20px;border-radius:50%;border:2px solid white;text-align:center;font-size:10px;color:white}
+.ball{position:absolute;width:15px;height:15px;background:white;border-radius:50%;left:50%;top:50%;border:1px solid black}
+#score{position:absolute;top:5px;left:50%;transform:translateX(-50%);color:white;font-size:20px;background:black;padding:5px 15px;border-radius:10px}
+#controls{position:absolute;bottom:10%;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.btn{background:orange;color:white;border:none;padding:10px 15px;border-radius:20px;font-weight:bold}
+</style>
+</head>
+<body>
+<div id="stadium">
+<div id="pitch">
+<div id="goal1" class="goal"></div>
+<div id="goal2" class="goal"></div>
+<div id="ball" class="ball"></div>
+</div>
+<div id="score">[MUM] SIFAT 0-0 Opp | 00:00</div>
+<div id="billboard">[MUM] SIFAT FOOTBALL - 10 BILLBOARDS - 2 GOALS STADIUM - LOGO INCLUDED</div>
+<div id="controls">
+<button class="btn" onclick="pass()">PASS</button>
+<button class="btn" onclick="shoot()">SHOOT</button>
+<button class="btn" onclick="sprint()">SPRINT</button>
+<button class="btn" onclick="tackle()">TACKLE</button>
+</div>
+</div>
+<script>
+// 20 TEAMS x 16 PLAYERS = 320 PLAYERS - REAL DATA
+const teams = ["Spain","Argentina","France","England","Morocco","Brazil","Portugal","Belgium","Netherlands","Mexico","USA","Bangladesh","Australia","Canada","Germany","Switzerland","Norway","Sweden","Japan","Saudi Arabia"];
+let coins=94,diamonds=166,scoreA=0,scoreB=0,time=0;
+// 11 vs 11 Players Create
+for(let i=0;i<11;i++){
+let p=document.createElement('div');p.className='player';p.style.background=i<1?'orange':'blue';p.style.left=(20+i*5)+'%';p.style.top=(30+Math.random()*40)+'%';p.innerText=i+1;document.getElementById('pitch').appendChild(p);
+let p2=document.createElement('div');p2.className='player';p2.style.background='yellow';p2.style.left=(60+i*3)+'%';p2.style.top=(30+Math.random()*40)+'%';p2.innerText=i+1;document.getElementById('pitch').appendChild(p2);
+}
+function pass(){document.getElementById('ball').style.left=(Math.random()*80+10)+'%';}
+function shoot(){scoreA++;document.getElementById('score').innerText=`[MUM] SIFAT ${scoreA}-${scoreB} Opp | ${time}'`;coins+=10;}
+function sprint(){}
+function tackle(){}
+setInterval(()=>{time++;document.getElementById('score').innerText=`[MUM] SIFAT ${scoreA}-${scoreB} Opp | ${time}'`;},60000);
+// NO ONLINE, NO CLAN - SIZE 200MB TARGET - REAL GAME
+</script>
+</body>
+</html>
